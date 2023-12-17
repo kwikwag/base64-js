@@ -1,10 +1,8 @@
-const lookup = []
 const revLookup = []
 
-const code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-for (let i = 0, len = code.length; i < len; ++i) {
-  lookup[i] = code[i]
-  revLookup[code.charCodeAt(i)] = i
+const lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (let i = 0, len = lookup.length; i < len; ++i) {
+  revLookup[lookup.charCodeAt(i)] = i
 }
 
 // Support decoding URL-safe base64 strings, as Node.js does.
