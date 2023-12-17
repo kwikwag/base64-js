@@ -1,32 +1,46 @@
 {
-  "name": "base64-js",
+  "name": "@kwikwag/base64-js",
   "description": "Base64 encoding/decoding in pure JS",
-  "version": "1.5.1",
-  "author": "T. Jameson Little <t.jameson.little@gmail.com>",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "T. Jameson Little <t.jameson.little@gmail.com> + Contributors",
   "typings": "index.d.ts",
   "bugs": {
-    "url": "https://github.com/beatgammit/base64-js/issues"
+    "url": "https://github.com/kwikwag/base64-js/issues"
   },
   "devDependencies": {
     "babel-minify": "^0.5.1",
     "benchmark": "^2.1.4",
-    "browserify": "^16.3.0",
+    "browserify": "^17.0.0",
+    "esmify": "^2.1.1",
     "standard": "*",
-    "tape": "4.x"
+    "tape": "^5.3.1"
   },
-  "homepage": "https://github.com/beatgammit/base64-js",
+  "homepage": "https://github.com/kwikwag/base64-js",
   "keywords": [
     "base64"
   ],
+  "engines": {
+    "node": ">=12.20"
+  },
   "license": "MIT",
   "main": "index.js",
+  "files": [
+    "/index.js",
+    "/index.d.ts"
+  ],
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "git://github.com/beatgammit/base64-js.git"
+    "url": "git://github.com/kwikwag/base64-js.git"
   },
   "scripts": {
-    "build": "browserify -s base64js -r ./ | minify > base64js.min.js",
+    "build": "browserify --standalone base64js --require ./ --plugin esmify | minify > base64js.min.js",
+    "bench": "node ./bench/basic.js && node ./bench/bench.js",
     "lint": "standard",
+    "lint:fix": "standard --fix",
     "test": "npm run lint && npm run unit",
     "unit": "tape test/*.js"
   },

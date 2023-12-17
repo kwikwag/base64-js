@@ -1,13 +1,13 @@
-const random = require('crypto').randomBytes
+import { toByteArray, fromByteArray, byteLength } from '../index.js'
+import { randomBytes as random } from 'crypto'
 
-const b64 = require('../')
 let data = random(1e6).toString('base64')
 const start = Date.now()
-const raw = b64.toByteArray(data)
+const raw = toByteArray(data)
 const middle1 = Date.now()
-data = b64.fromByteArray(raw)
+data = fromByteArray(raw)
 const middle2 = Date.now()
-const len = b64.byteLength(data)
+const len = byteLength(data)
 const end = Date.now()
 
 console.log(
