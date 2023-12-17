@@ -29,11 +29,18 @@ This repository is forked from https://github.com/beatgammit/base64-js. However,
 
 ## methods
 
-`base64js` has three exposed functions, `byteLength`, `toByteArray` and `fromByteArray`, which both take a single argument.
+`base64-js` has three exposed functions, `byteLength`, `toByteArray` and `fromByteArray`, which both take a single required argument.
 
 * `byteLength` - Takes a base64 string and returns length of byte array
 * `toByteArray` - Takes a base64 string and returns a byte array
 * `fromByteArray` - Takes a byte array and returns a base64 string
+
+`fromByteArray` accepts an extra optional `opts` argument, with the following properties:
+
+* `variant` - one of `"base64"` or [`"base64url"`](https://datatracker.ietf.org/doc/html/rfc4648#section-5);
+  defaults to `"base64"`
+* `pad` - whether to add `"="` to end of encoded string; one of `"yes"` or `"no"`;
+  defaults to `"yes"`
 
 ## license
 
