@@ -1,14 +1,15 @@
 const revLookup = []
 
 const lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+const lookupUrl = lookup.substring(0, 62) + '-_'
 for (let i = 0, len = lookup.length; i < len; ++i) {
   revLookup[lookup.charCodeAt(i)] = i
 }
 
 // Support decoding URL-safe base64 strings, as Node.js does.
 // See: https://en.wikipedia.org/wiki/Base64#URL_applications
-revLookup['-'.charCodeAt(0)] = 62
-revLookup['_'.charCodeAt(0)] = 63
+revLookup[lookupUrl.charCodeAt(62)] = 62
+revLookup[lookupUrl.charCodeAt(63)] = 63
 
 function getLens (b64) {
   const len = b64.length
@@ -95,55 +96,66 @@ export function toByteArray (b64) {
   return arr
 }
 
-function tripletToBase64 (num) {
+function tripletToBase64 (num, lookup) {
   return lookup[num >> 18 & 0x3F] +
     lookup[num >> 12 & 0x3F] +
     lookup[num >> 6 & 0x3F] +
     lookup[num & 0x3F]
 }
 
-function encodeChunk (uint8, start, end) {
+function encodeChunk (uint8, start, end, lookup) {
   const output = []
   for (let i = start; i < end; i += 3) {
     const tmp =
       ((uint8[i] << 16) & 0xFF0000) +
       ((uint8[i + 1] << 8) & 0xFF00) +
       (uint8[i + 2] & 0xFF)
-    output.push(tripletToBase64(tmp))
+    output.push(tripletToBase64(tmp, lookup))
   }
   return output.join('')
 }
 
 /**
  * Converts a Uint8Array to a base64 string
- * @param {Uint8Array} data to base64-encode
+ * @param {Uint8Array} uint8 data to base64-encode
+ * @param {object} opts variant options
+ * @param {string} opts.variant one of "base64" | "base64url"; defaults to "base64"
+ * @param {boolean} opts.pad one of "no" | "yes"; defaults to "yes"
  */
-export function fromByteArray (uint8) {
+export function fromByteArray (uint8, opts) {
   const len = uint8.length
   const extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
   const parts = []
   const maxChunkLength = 16383 // must be multiple of 3
 
+  opts = opts || {}
+  const variant = opts.variant || 'base64'
+  const l = variant === 'base64' ? lookup : variant === 'base64url' ? lookupUrl : undefined
+  if (l === undefined) {
+    throw new Error('Invalid variant')
+  }
+  const pad = (opts.pad || 'yes') === 'yes'
+
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (let i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength), l))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
   if (extraBytes === 1) {
     const tmp = uint8[len - 1]
     parts.push(
-      lookup[tmp >> 2] +
-      lookup[(tmp << 4) & 0x3F] +
-      '=='
+      l[tmp >> 2] +
+      l[(tmp << 4) & 0x3F] +
+      (pad ? '==' : '')
     )
   } else if (extraBytes === 2) {
     const tmp = (uint8[len - 2] << 8) + uint8[len - 1]
     parts.push(
-      lookup[tmp >> 10] +
-      lookup[(tmp >> 4) & 0x3F] +
-      lookup[(tmp << 2) & 0x3F] +
-      '='
+      l[tmp >> 10] +
+      l[(tmp >> 4) & 0x3F] +
+      l[(tmp << 2) & 0x3F] +
+      (pad ? '=' : '')
     )
   }
 
