@@ -1,9 +1,7 @@
-base64-js
-=========
+@kwikwag/base64-js
+==================
 
 `base64-js` does basic base64 encoding/decoding in pure JS.
-
-[![build status](https://secure.travis-ci.org/beatgammit/base64-js.png)](http://travis-ci.org/beatgammit/base64-js)
 
 Many browsers already have base64 encoding/decoding functionality, but it is for text data, not all-purpose binary data.
 
@@ -13,11 +11,19 @@ Sometimes encoding/decoding binary data in the browser is useful, and that is wh
 
 With [npm](https://npmjs.org) do:
 
-`npm install base64-js` and `var base64js = require('base64-js')`
+`npm install git+https://github.com/kwikwag/base64-js`
 
 For use in web browsers do:
 
 `<script src="base64js.min.js"></script>`
+
+Or, if you're using a module bundler, you can:
+
+`import * as base64 from '@kwikwag/base64-js'`
+
+## upstream support
+
+This repository is forked from https://github.com/beatgammit/base64-js. However, they offer support:
 
 [Get supported base64-js with the Tidelift Subscription](https://tidelift.com/subscription/pkg/npm-base64-js?utm_source=npm-base64-js&utm_medium=referral&utm_campaign=readme)
 

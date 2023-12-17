@@ -1,5 +1,8 @@
-const test = require('tape')
-const b64 = require('../')
+import test from 'tape'
+import { fromByteArray, toByteArray, byteLength } from '../index.js'
+
+const decoder = new TextDecoder()
+
 const checks = [
   'a',
   'aa',
@@ -18,13 +21,13 @@ test('convert to base64 and back', function (t) {
   for (let i = 0; i < checks.length; i++) {
     const check = checks[i]
 
-    const b64Str = b64.fromByteArray(map(check, function (char) { return char.charCodeAt(0) }))
+    const b64Str = fromByteArray(map(check, function (char) { return char.charCodeAt(0) }))
 
-    const arr = b64.toByteArray(b64Str)
-    const str = map(arr, function (byte) { return String.fromCharCode(byte) }).join('')
+    const arr = toByteArray(b64Str)
+    const str = decoder.decode(arr)
 
     t.equal(check, str, 'Checked ' + check)
-    t.equal(b64.byteLength(b64Str), arr.length, 'Checked length for ' + check)
+    t.equal(byteLength(b64Str), arr.length, 'Checked length for ' + check)
   }
 })
 
@@ -40,7 +43,7 @@ test('convert known data to string', function (t) {
   for (let i = 0; i < data.length; i++) {
     const bytes = data[i][0]
     const expected = data[i][1]
-    const actual = b64.fromByteArray(bytes)
+    const actual = fromByteArray(bytes)
     t.equal(actual, expected, 'Ensure that ' + bytes + ' serialise to ' + expected)
   }
   t.end()
@@ -50,9 +53,9 @@ test('convert known data from string', function (t) {
   for (let i = 0; i < data.length; i++) {
     const expected = data[i][0]
     const string = data[i][1]
-    const actual = b64.toByteArray(string)
+    const actual = toByteArray(string)
     t.ok(equal(actual, expected), 'Ensure that ' + string + ' deserialise to ' + expected)
-    const length = b64.byteLength(string)
+    const length = byteLength(string)
     t.equal(length, expected.length, 'Ensure that ' + string + ' has byte lentgh of ' + expected.length)
   }
   t.end()
