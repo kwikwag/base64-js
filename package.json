@@ -38,6 +38,7 @@
   },
   "scripts": {
     "build": "browserify --standalone base64js --require ./ --plugin esmify | minify > base64js.min.js",
+    "bench": "node ./bench/basic.js && node ./bench/bench.js",
     "lint": "standard",
     "lint:fix": "standard --fix",
     "test": "npm run lint && npm run unit",
